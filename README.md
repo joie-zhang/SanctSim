@@ -14,7 +14,7 @@ This framework lets you simulate how different Large Language Models (LLMs) hand
 - 📊 Four distinct behavioral patterns emerge across model architectures
 - 🎁 LLMs strongly prefer rewarding cooperation, while humans favor punishing defection
 
-![Cooperation Patterns]([https://via.placeholder.com/800x300?text=Cooperation+Patterns+Visualization](https://media.tenor.com/jWTOcH5trbIAAAAC/meow-im-dancing.gif))
+![Cooperation Patterns showing behavioral archetypes across different LLM models](figures/contribution_evolution.svg)
 
 ## 🔍 Why It Matters
 
