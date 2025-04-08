@@ -1,28 +1,56 @@
-# LLM Cooperation Simulation Framework
+# 🤖 LLM Cooperation Lab
+![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Paper Status: Under Review](https://img.shields.io/badge/Paper-COLM%202025%20(Under%20Review)-orange)
 
-This repository contains code for simulating and analyzing cooperation between Large Language Model (LLM) agents in a public goods game with institutional choice. The framework allows evaluating how different LLM architectures navigate social dilemmas, balance self-interest with collective welfare, and utilize norm enforcement mechanisms.
+## What happens when AI agents choose between self-interest and the greater good?
 
-## Repository Structure
+This framework lets you simulate how different Large Language Models (LLMs) handle public goods dilemmas and whether they'll pay the price to enforce cooperation through sanctions. Based on classic behavioral economics experiments, we explore whether LLMs prefer cooperative institutions that allow for costly norm enforcement.
 
-The codebase consists of the following key components:
+## 💡 Key Discoveries
+
+- 🔄 Traditional LLMs unexpectedly outperform reasoning-focused models at cooperation
+- 🏆 Some models achieve near-human cooperation levels but using different strategies
+- 📊 Four distinct behavioral patterns emerge across model architectures
+- 🎁 LLMs strongly prefer rewarding cooperation, while humans favor punishing defection
+
+![Cooperation Patterns]([https://via.placeholder.com/800x300?text=Cooperation+Patterns+Visualization](https://media.tenor.com/jWTOcH5trbIAAAAC/meow-im-dancing.gif))
+
+## 🔍 Why It Matters
+
+Understanding how LLMs cooperate can help us:
+- Build better multi-agent AI systems that work together
+- Explore alignment techniques for collaborative AI
+- Identify which models might be better suited for cooperative tasks
+- Compare AI social behaviors with human patterns
+
+Our research reveals that current approaches to improving LLMs by enhancing reasoning capabilities doesn't necessarily improve cooperation - traditional models often cooperate better than reasoning-optimized ones.
+
+## 🚀 Quick Start
+
+Run a complete simulation with default parameters:
+```bash
+python main.py --api-provider openai --model-name gpt-4o
+```
+
+## 📋 Project Structure
+
+The codebase consists of these key components:
 
 - **Core Simulation Files**:
-  - `agent.py`: Implements the Agent class representing simulation participants
-  - `environment.py`: Manages the game environment and round progression
-  - `institution.py`: Defines the Sanctioning and Sanction-Free institutions
-  - `parameters.py`: Contains all configurable simulation parameters
-  - `main.py`: Entry point for running the simulation
+  - `agent.py`: LLM-based simulation participants
+  - `environment.py`: Game environment and round progression
+  - `institution.py`: Sanctioning and Sanction-Free institutions
+  - `parameters.py`: Configurable simulation parameters
+  - `main.py`: Entry point for running experiments
 
 - **API Client Files**:
-  - `azure_openai_client.py`: Client for Azure OpenAI API
-  - `openai_client.py`: Client for OpenAI API
-  - `openrouter_client.py`: Client for OpenRouter API
-  - `kluster_ai_client.py`: Client for KlusterAI API (referenced but not included)
+  - `azure_openai_client.py`: Azure OpenAI API
+  - `openai_client.py`: OpenAI API
+  - `openrouter_client.py`: OpenRouter API
+  - `kluster_ai_client.py`: KlusterAI API
 
-- **Analysis Files**:
-  - `paste.txt`: Contains code for analyzing decision-making strategies in simulation results
-
-## Installation
+## 🛠️ Installation
 
 1. Clone this repository
 2. Install the required dependencies:
@@ -31,30 +59,26 @@ The codebase consists of the following key components:
 pip install openai pandas numpy matplotlib backoff tqdm
 ```
 
-## Configuration
+## ⚙️ Configuration
 
-The simulation is configured through `parameters.py`, which contains the following key settings:
+The simulation is configured through `parameters.py`:
 
-- `NUM_AGENTS`: Number of agents in the simulation (default: 7)
-- `NUM_ROUNDS`: Number of rounds in the simulation (default: 15)
-- `PUBLIC_GOOD_MULTIPLIER`: Multiplication factor for public good contributions (default: 1.6)
-- `INITIAL_TOKENS`: Starting tokens for each agent (default: 1000)
-- `ENDOWMENT_STAGE_1`: Tokens given to each agent per round (default: 20)
-- `ENDOWMENT_STAGE_2`: Additional tokens for sanctioning (default: 20)
-- `PUNISHMENT_EFFECT`: Impact of punishment on receiver (default: 3)
-- `REWARD_EFFECT`: Impact of reward on receiver (default: 1)
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `NUM_AGENTS` | Simulation participants | 7 |
+| `NUM_ROUNDS` | Simulation duration | 15 |
+| `PUBLIC_GOOD_MULTIPLIER` | Multiplication factor | 1.6 |
+| `INITIAL_TOKENS` | Starting tokens per agent | 1000 |
+| `ENDOWMENT_STAGE_1` | Tokens per round | 20 |
+| `ENDOWMENT_STAGE_2` | Tokens for sanctioning | 20 |
+| `PUNISHMENT_EFFECT` | Impact of punishment | -3 |
+| `REWARD_EFFECT` | Impact of reward | +1 |
 
-## Usage
+## 🧪 Running Experiments
 
-To run a simulation, execute the main script with appropriate parameters:
+### API Configuration Options
 
-```bash
-python main.py --api-provider azure --deployment-name MODEL_NAME --azure-endpoint ENDPOINT --num-rounds 15 --num-agents 7
-```
-
-### API Configuration
-
-The simulation supports multiple API providers:
+The simulation supports multiple LLM providers:
 
 1. **Azure OpenAI**:
 ```bash
@@ -82,41 +106,30 @@ You can also configure API access via environment variables:
 - Azure: `AZURE_API_KEY`, `AZURE_ENDPOINT`, `AZURE_DEPLOYMENT_NAME`
 - OpenAI: `OPENAI_API_KEY`, `OPENAI_MODEL_NAME`
 - OpenRouter: `OPENROUTER_API_KEY`
-- KlusterAI: `KLUSTER_API_KEY`
 
-## Output Data
+## 📊 Output & Analysis
 
 Simulation results are saved as JSON files with the naming pattern:
 ```
-simulation_results_{model_name}_{num_agents}agents_{num_rounds}rounds_{run_id}.json
+simulation_results_{model_name}_{num_agents}agents_{num_rounds}rounds.json
 ```
 
-Each file contains detailed data about agent decisions, including:
-- Institution choices (SI vs. SFI) with reasoning
+Each file contains detailed agent decisions, including:
+- Institution choices with reasoning
 - Contribution amounts with reasoning
 - Punishment/reward allocations with reasoning
-- Payoffs for each round
-- Cumulative statistics
+- Payoffs and cumulative statistics
 
-## Analysis
+The repository includes code for analyzing agent reasoning patterns and classifying strategies.
 
-The repository includes code for analyzing agent reasoning patterns:
 
-1. Run the simulation to generate result files
-2. Use the analysis code in `paste.txt` to classify reasoning strategies
-3. Generate comparative visualizations between model architectures
-
-The analysis classifies reasoning into categories including:
-- Economic Reasoning (payoff maximization, Nash equilibrium, free-riding)
-- Social Cooperation (cooperative arguments, social norms, reputation)
-- Risk Management (risk aversion, complexity aversion)
-- Control & Strategy (control-based reasoning, learning, status quo bias)
-
-## Citation
+## 📄 Citation
 
 If using this codebase for research, please cite our paper:
 
 
-## License
+## 🔗 Join the Research
+
+Try the framework with different models, contribute new analysis methods, or cite our work in your research on AI cooperation.
 
 This project is provided for research purposes.
