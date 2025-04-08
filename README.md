@@ -11,8 +11,8 @@ This framework lets you simulate how different Large Language Models (LLMs) hand
 
 - 🔄 Traditional LLMs unexpectedly outperform reasoning-focused models at cooperation
 - 🏆 Some models achieve near-human cooperation levels but using different strategies
-- 📊 Four distinct behavioral patterns emerge across model architectures
 - 🎁 LLMs strongly prefer rewarding cooperation, while humans favor punishing defection
+- 📊 Four distinct behavioral patterns emerge across model architectures
 
 ![Cooperation Patterns showing behavioral archetypes across different LLM models](figures/contribution_evolution.svg)
 
