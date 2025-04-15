@@ -1,7 +1,7 @@
 # 🤖 LLM Cooperation Lab
 ![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Paper Status: Under Review](https://img.shields.io/badge/Paper-COLM%202025%20(Under%20Review)-orange)
+
 
 ## What happens when AI agents choose between self-interest and the greater good?
 
