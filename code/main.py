@@ -1,11 +1,12 @@
 import os
 import argparse
+import time
 from agent import Agent
 from environment import Environment
 import parameters
 from azure_openai_client import AzureOpenAIClient
 from openrouter_client import OpenRouterClient
-from kluster_ai_client import KlusterAIClient
+# from kluster_ai_client import KlusterAIClient  # File not found - removed
 from openai_client import OpenAIClient
 
 def main():
@@ -15,7 +16,7 @@ def main():
     # --- Existing API Client Arguments ---
     api_group = parser.add_argument_group('Main API Client Configuration')
     api_group.add_argument('--api-provider', type=str, default=os.getenv('API_PROVIDER', 'azure'),
-                           help='API provider for main agent LLM calls (azure, openrouter, kluster, openai).')
+                           help='API provider for main agent LLM calls (azure, openrouter, openai).')
     api_group.add_argument('--model-name', type=str, default=None,
                            help='Model name for the main API client.')
     api_group.add_argument('--deployment-name', type=str, default=None,
@@ -27,7 +28,7 @@ def main():
 
     summary_api_group = parser.add_argument_group('Summary API Client Configuration')
     summary_api_group.add_argument('--summary-api-provider', type=str, default='openai',
-                                   help='API provider for summary LLM calls (azure, openrouter, kluster, openai).')
+                                   help='API provider for summary LLM calls (azure, openrouter, openai).')
     summary_api_group.add_argument('--summary-model-name', type=str, default='gpt-3.5-turbo',
                                    help='Model name for the summary API client.')
     summary_api_group.add_argument('--summary-deployment-name', type=str, default=None,
@@ -46,12 +47,17 @@ def main():
                         help=f"Number of rounds for the simulation (default: {parameters.NUM_ROUNDS})")
     parser.add_argument('--num-agents', type=int, default=parameters.NUM_AGENTS,
                         help=f"Number of agents in the simulation (default: {parameters.NUM_AGENTS})")
+    parser.add_argument('--alpha', type=float, default=parameters.PUBLIC_GOOD_MULTIPLIER,
+                        help=f"Public good multiplier (alpha) for the simulation (default: {parameters.PUBLIC_GOOD_MULTIPLIER})")
+    parser.add_argument('--reasoning-effort', type=str, default='low',
+                        help='Reasoning effort level for OpenAI models (low, medium, high)')
 
     args = parser.parse_args()
 
     # Override parameters with command-line values (if provided)
     parameters.NUM_ROUNDS = args.num_rounds
     parameters.NUM_AGENTS = args.num_agents
+    parameters.PUBLIC_GOOD_MULTIPLIER = args.alpha
 
     # --- Initialize Main API Client ---
     api_provider = args.api_provider.lower()
@@ -72,17 +78,17 @@ def main():
         if not api_key:
             raise Exception("Missing OpenRouter API key for main client.")
         api_client = OpenRouterClient(api_key=api_key, model_name=model_name or 'deepseek/deepseek-chat')
-    elif api_provider == 'kluster':
-        api_key = main_api_key or os.getenv('KLUSTER_API_KEY')
-        if not api_key:
-            raise Exception("Missing KluSter API key for main client.")
-        api_client = KlusterAIClient(api_key=api_key, model_name=model_name or 'deepseek-ai/DeepSeek-R1')
+    # elif api_provider == 'kluster':
+    #     api_key = main_api_key or os.getenv('KLUSTER_API_KEY')
+    #     if not api_key:
+    #         raise Exception("Missing KluSter API key for main client.")
+    #     api_client = KlusterAIClient(api_key=api_key, model_name=model_name or 'deepseek-ai/DeepSeek-R1')
     elif api_provider == 'openai':
         api_key = main_api_key or os.getenv('OPENAI_API_KEY')
         model_name = model_name or os.getenv('OPENAI_MODEL_NAME')
         if not all([api_key, model_name]):
             raise Exception("Missing OpenAI credentials for main client.")
-        api_client = OpenAIClient(api_key=api_key, model_name=model_name, reasoning_effort='low')
+        api_client = OpenAIClient(api_key=api_key, model_name=model_name, reasoning_effort=args.reasoning_effort)
     else:
         raise Exception(f"Unsupported API provider '{api_provider}' for main client.")
 
@@ -109,19 +115,26 @@ def main():
         if not summary_api_key:
             raise Exception("Missing OpenRouter API key for summary client.")
         summary_api_client = OpenRouterClient(api_key=summary_api_key, model_name=summary_model_name or 'deepseek/deepseek-chat')
-    elif summary_api_provider == 'kluster':
-        summary_api_key = summary_api_key or os.getenv('KLUSTER_API_KEY')
-        if not summary_api_key:
-            raise Exception("Missing KluSter API key for summary client.")
-        summary_api_client = KlusterAIClient(api_key=summary_api_key, model_name=summary_model_name or 'deepseek-ai/DeepSeek-R1')
+    # elif summary_api_provider == 'kluster':
+    #     summary_api_key = summary_api_key or os.getenv('KLUSTER_API_KEY')
+    #     if not summary_api_key:
+    #         raise Exception("Missing KluSter API key for summary client.")
+    #     summary_api_client = KlusterAIClient(api_key=summary_api_key, model_name=summary_model_name or 'deepseek-ai/DeepSeek-R1')
     else:
         raise Exception(f"Unsupported API provider '{summary_api_provider}' for summary client.")
 
     results_filename = args.results_filename
 
+    # --- Create unique output directory for this simulation run ---
+    run_id = f"run_{int(time.time())}_{os.getpid()}"
+    output_dir = f"logs/{run_id}"
+    os.makedirs(output_dir, exist_ok=True)
+    
+    print(f"Simulation output directory: {output_dir}")
+
     # --- Initialize agents using the (possibly overridden) parameters ---
     agents = [
-        Agent(agent_id=i, api_client=api_client, summary_api_client=summary_api_client)
+        Agent(agent_id=i, api_client=api_client, summary_api_client=summary_api_client, output_dir=output_dir)
         for i in range(parameters.NUM_AGENTS)
     ]
 
@@ -135,7 +148,9 @@ def main():
             results_filename,
             model_name,  # Main model name for filename
             parameters.NUM_AGENTS,
-            parameters.NUM_ROUNDS
+            parameters.NUM_ROUNDS,
+            parameters.PUBLIC_GOOD_MULTIPLIER,  # alpha parameter
+            args.reasoning_effort  # reasoning effort parameter
         )
 
     if hasattr(api_client, 'get_total_cost'):

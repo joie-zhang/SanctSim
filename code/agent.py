@@ -43,11 +43,11 @@ import re  # For parsing responses
 # Assuming the API clients are imported correctly
 from azure_openai_client import AzureOpenAIClient
 from openrouter_client import OpenRouterClient
-from kluster_ai_client import KlusterAIClient
+# from kluster_ai_client import KlusterAIClient  # File not found - removed
 from openai_client import OpenAIClient
 
 class Agent:
-    def __init__(self, agent_id, api_client, summary_api_client=None):
+    def __init__(self, agent_id, api_client, summary_api_client=None, output_dir=None):
         """
         Initialize an Agent.
 
@@ -56,10 +56,12 @@ class Agent:
         - api_client: The main API client used for agent's decision-making LLM calls.
         - summary_api_client (optional): API client used for isolated LLM calls (e.g., deanonymization).
           If not provided, the main api_client is used.
+        - output_dir (str, optional): Directory to save agent debug files. If not provided, uses current directory.
         """
         self.agent_id = agent_id
         self.api_client = api_client
         self.summary_api_client = summary_api_client if summary_api_client else api_client
+        self.output_dir = output_dir or "."
 
         self.institution_choice = None  # 'SI' or 'SFI'
         self.contribution = 0
@@ -445,7 +447,7 @@ You are in Stage 1, in the {institution} in Round {round_number}.
         )
 
         # save prompt and response to json 
-        with open(f'info_{self.agent_id}.json', 'w') as f:
+        with open(os.path.join(self.output_dir, f'info_{self.agent_id}.json'), 'w') as f:
             json.dump({'prompt': prompt, 'response': response}, f)
 
 

@@ -225,19 +225,23 @@ class Environment:
         # Optionally, save data for analysis
         self.results.append(round_data)
 
-    def save_results_to_filename(self, filename, model_name, num_agents, num_rounds):
+    def save_results_to_filename(self, filename, model_name, num_agents, num_rounds, alpha=None, reasoning_effort=None):
         """
         Saves the simulation results to a specified file with parameters in the filename.
         """
         if parameters.SAVE_RESULTS:
             import json
+            import os
+            from datetime import datetime
 
             # Construct dynamic filename
             base_filename = "simulation_results"
             model_component = f"_{model_name.replace('/', '_')}" if model_name else "" # Replace '/' for filename safety
             agents_component = f"_{num_agents}agents"
             rounds_component = f"_{num_rounds}rounds"
-            full_filename = f"{base_filename}{model_component}{agents_component}{rounds_component}.json"
+            alpha_component = f"_alpha{alpha}" if alpha is not None else ""
+            reasoning_component = f"_reasoning{reasoning_effort}" if reasoning_effort else ""
+            full_filename = f"{base_filename}{model_component}{agents_component}{rounds_component}{alpha_component}{reasoning_component}.json"
 
             # If a filename is provided via command line, prioritize it, otherwise use the constructed name
             final_filename = filename if filename else full_filename
