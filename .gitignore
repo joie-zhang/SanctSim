@@ -1,0 +1,7 @@
+sweep
+sweep_results*
+sweep_with_overriding*
+wandb
+logs
+.claude
+__pycache__
