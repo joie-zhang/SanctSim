@@ -1,0 +1,94 @@
+{
+  "sweep_configurations": {
+    "quick_test": {
+      "num_agents": [2, 5],
+      "alpha_values": [0.5, 2.0],
+      "models": ["o1", "o4-mini-low"],
+      "max_parallel_jobs": 2,
+      "timeout_minutes": 600
+    },
+    "comprehensive": {
+      "num_agents": [2, 5, 7, 10, 15, 20],
+      "alpha_values": [0.5, 1.0, 1.6, 2.0, 4.0, 10.0],
+      "models": "all",
+      "max_parallel_jobs": 4,
+      "timeout_minutes": 600
+    },
+    "alpha_sweep": {
+      "num_agents": [5],
+      "alpha_values": [0.1, 0.5, 1.0, 1.5, 2.0, 3.0, 5.0, 10.0],
+      "models": ["claude-3.5-sonnet"],
+      "max_parallel_jobs": 3,
+      "timeout_minutes": 600
+    },
+    "model_comparison": {
+      "num_agents": [5, 10],
+      "alpha_values": [1.6],
+      "models": ["claude-3.5-sonnet", "claude-3.5-haiku", "o4-mini-low", "o4-mini-high"],
+      "max_parallel_jobs": 4,
+      "timeout_minutes": 600
+    }
+  },
+  "api_configurations": {
+    "openrouter": {
+      "api_key_env": "OPENROUTER_API_KEY",
+      "base_url": "https://openrouter.ai/api/v1",
+      "models": {
+        "claude-3.5-sonnet": "anthropic/claude-3.5-sonnet",
+        "claude-3.5-haiku": "anthropic/claude-3.5-haiku",
+        "claude-4-opus": "anthropic/claude-4-opus",
+        "llama": "meta-llama/llama-3.1-8b-instruct",
+        "qwen": "qwen/qwen-2.5-vl-7b-instruct"
+      }
+    },
+    "openai": {
+      "api_key_env": "OPENAI_API_KEY",
+      "models": {
+        "o1-mini": {
+          "model_name": "o1-mini-2024-09-12"
+        },
+        "o3": {
+          "model_name": "o3-2025-04-16"
+        },
+        "o3-mini-low": {
+          "model_name": "o3-mini-2025-01-31",
+          "reasoning_effort": "low"
+        },
+        "o3-mini-med": {
+          "model_name": "o3-mini-2025-01-31",
+          "reasoning_effort": "medium"
+        },
+        "o3-mini-high": {
+          "model_name": "o3-mini-2025-01-31",
+          "reasoning_effort": "high"
+        },
+        "o4-mini-low": {
+          "model_name": "o4-mini-2025-04-16",
+          "reasoning_effort": "low"
+        }, 
+        "o4-mini-med": {
+          "model_name": "o4-mini-2025-04-16",
+          "reasoning_effort": "medium"
+        },
+        "o4-mini-high": {
+          "model_name": "o4-mini-2025-04-16",
+          "reasoning_effort": "high"
+        }
+      }
+    },
+    "anthropic": {
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "models": {
+        "claude-4-opus": "claude-3-opus-20240229",
+        "claude-4-sonnet": "claude-3-5-sonnet-20241022",
+        "claude-3.5-sonnet": "claude-3-5-sonnet-20241022",
+        "claude-3.5-haiku": "claude-3-5-haiku-20241022"
+      }
+    }
+  },
+  "resource_limits": {
+    "max_memory_gb": 8,
+    "max_cpu_percent": 80,
+    "max_concurrent_per_provider": 2
+  }
+}
